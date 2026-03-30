@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Calendar as CalendarIcon, MapPin, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';

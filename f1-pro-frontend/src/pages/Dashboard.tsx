@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Zap, Trophy, TrendingUp, ChevronRight, Wind, Timer, MapPin } from 'lucide-react';
 import { DriverAvatar } from '../components/DriverAvatar';

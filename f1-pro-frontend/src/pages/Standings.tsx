@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Trophy, ShieldCheck, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
