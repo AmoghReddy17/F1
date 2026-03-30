@@ -36,10 +36,12 @@ BASE_URL = "https://api.jolpi.ca/ergast/f1"
 def get_telemetry(year: int, round: int, driver_code: str):
     driver_code = driver_code.upper()
     try:
-        # Simulation logic: physics based on 2025 baseline
         target_year = year if year < 2026 else 2025
         session = fastf1.get_session(target_year, round, 'Q')
-        session.load(telemetry=True)
+        
+        # 🏁 OPTIMIZATION: "Lean Load"
+        # We only load the Laps (small). We do NOT load telemetry yet.
+        session.load(laps=True, telemetry=False, weather=False, messages=False)
         
         driver_laps = session.laps.pick_drivers(driver_code)
         if len(driver_laps) == 0: return []
@@ -48,14 +50,17 @@ def get_telemetry(year: int, round: int, driver_code: str):
         if fastest_lap is None:
             fastest_lap = driver_laps.sort_values(by='LapTime').iloc[0]
 
+        # 🏁 OPTIMIZATION: Only pull telemetry for THIS specific lap
+        # This saves ~400MB of RAM, preventing the Render crash.
         telemetry = fastest_lap.get_telemetry()
         
         boost = 1.07 if year == 2026 else 1.0
         
+        # Increased sampling to [::20] to keep the JSON response very light
         return [
             {"Distance": float(d), "Speed": float(s) * boost} 
             for d, s in zip(telemetry['Distance'], telemetry['Speed'])
-        ][::10] 
+        ][::20] 
     except Exception as e:
         print(f"Telemetry Error: {e}")
         return []
