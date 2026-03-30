@@ -6,10 +6,12 @@ import {
   ResponsiveContainer, AreaChart, Area 
 } from 'recharts';
 import { 
-  TrendingUp, Award, Target, BarChart3, 
+  TrendingUp, Target, BarChart3, 
   Star, Zap, ArrowLeft
 } from 'lucide-react';
 import { DriverAvatar } from '../components/DriverAvatar';
+// 🏁 IMPORT CONFIG
+import { API_BASE } from '../config';
 
 const DriverProfile = () => {
   const { driverCode = "VER", year = "2026" } = useParams();
@@ -22,7 +24,8 @@ const DriverProfile = () => {
     const fetchDriverData = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`http://localhost:8000/api/driver-history/${year}/${driverCode}`);
+        // 🏁 USE API_BASE
+        const res = await axios.get(`${API_BASE}/api/driver-history/${year}/${driverCode}`);
         setHistory(res.data.history);
         setStats(res.data.stats);
       } catch (err) { console.error(err); }
@@ -34,9 +37,7 @@ const DriverProfile = () => {
   if (loading) return <div className="h-screen flex items-center justify-center text-red-600 font-black italic animate-pulse">LOADING PROFILE...</div>;
 
   return (
-    <div className="max-w-[1500px] mx-auto p-10 pt-28 min-h-screen">
-      
-      {/* 🏁 Navigation Row */}
+    <div className="max-w-[1500px] mx-auto p-10 pt-32 min-h-screen">
       <nav className="mb-10 flex items-center justify-between">
         <button 
           onClick={() => navigate(-1)} 
@@ -46,8 +47,8 @@ const DriverProfile = () => {
             <ArrowLeft size={18} />
           </div>
           <div className="flex flex-col items-start">
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] leading-none">Back to Rankings</span>
-            <span className="text-[8px] font-bold text-gray-600 uppercase mt-1">Season {year} Standings</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] leading-none text-gray-600 group-hover:text-red-600">Back to Rankings</span>
+            <span className="text-[8px] font-bold text-gray-800 uppercase mt-1 tracking-widest">Season {year} Statistics</span>
           </div>
         </button>
 
@@ -57,20 +58,17 @@ const DriverProfile = () => {
         </div>
       </nav>
       
-      {/* 🏎️ HERO SECTION: REFINED DRIVER CARD */}
       <div className="relative bg-white/[0.02] border border-white/5 rounded-[4rem] p-12 mb-10 overflow-hidden shadow-2xl">
         <div className="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none" 
              style={{ background: `linear-gradient(90deg, transparent, ${stats?.teamColor})` }} />
         
         <div className="flex flex-col lg:flex-row items-center gap-16 relative z-10">
-          {/* Avatar with Glow Container */}
           <div className="relative">
              <div className="absolute inset-0 blur-3xl opacity-20 rounded-full" style={{ backgroundColor: stats?.teamColor }} />
              <DriverAvatar code={driverCode} size="w-72 h-72" isSelected teamColor={stats?.teamColor} />
           </div>
           
           <div className="text-center lg:text-left flex-1">
-            {/* Badges Row */}
             <div className="flex items-center justify-center lg:justify-start gap-3 mb-6">
                <span className="bg-white/10 border border-white/5 px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.2em] text-white/70">
                  {stats?.teamName}
@@ -80,7 +78,6 @@ const DriverProfile = () => {
                </span>
             </div>
 
-            {/* 🏁 NAME HIERARCHY FIX */}
             <div className="mb-8">
               <h2 className="text-3xl font-light uppercase tracking-[-0.02em] text-white/40 leading-none mb-1">
                 {stats?.firstName}
@@ -92,7 +89,6 @@ const DriverProfile = () => {
               </h1>
             </div>
 
-            {/* Stats Summary Row: Anchored closer to name */}
             <div className="flex flex-wrap justify-center lg:justify-start gap-12 border-t border-white/5 pt-8">
               <div>
                 <p className="text-[9px] font-black uppercase text-gray-500 tracking-[0.2em] mb-2">Season Points</p>
@@ -114,8 +110,6 @@ const DriverProfile = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-        
-        {/* 📈 SEASON TREND CHART */}
         <div className="lg:col-span-2 bg-black/40 border border-white/10 rounded-[3.5rem] p-10 flex flex-col">
           <div className="flex items-center justify-between mb-10">
             <div>
@@ -142,21 +136,12 @@ const DriverProfile = () => {
                   itemStyle={{ color: stats?.teamColor, fontWeight: '900', textTransform: 'uppercase', fontSize: '10px' }}
                   labelStyle={{ color: '#666', fontSize: '10px', marginBottom: '4px', fontWeight: 'bold' }}
                 />
-                <Area 
-                  type="monotone" 
-                  dataKey="points" 
-                  stroke={stats?.teamColor} 
-                  strokeWidth={4} 
-                  fillOpacity={1} 
-                  fill="url(#colorPoints)" 
-                  animationDuration={2000}
-                />
+                <Area type="monotone" dataKey="points" stroke={stats?.teamColor} strokeWidth={4} fillOpacity={1} fill="url(#colorPoints)" animationDuration={2000} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* ⚡ INSIGHT CARDS */}
         <div className="space-y-6">
           <div className="bg-white/[0.03] border border-white/5 p-8 rounded-[2.5rem] flex items-center gap-6 group hover:bg-white/[0.05] transition-all">
             <div className="p-4 bg-green-500/10 rounded-2xl text-green-500 group-hover:scale-110 transition-transform"><Target size={24} /></div>
@@ -179,13 +164,10 @@ const DriverProfile = () => {
             <p className="text-[10px] font-black uppercase tracking-widest text-white/60 mb-2">Next Objective</p>
             <h3 className="text-2xl font-black italic uppercase text-white leading-tight">Close the gap to <br /> Championship Leader</h3>
             <div className="mt-6 flex items-center gap-2">
-              <span className="text-[9px] font-black px-3 py-1 bg-black/20 rounded-full text-white uppercase tracking-tighter shadow-lg">
-                Distance: {stats?.gapToLeader} PTS
-              </span>
+              <span className="text-[9px] font-black px-3 py-1 bg-black/20 rounded-full text-white uppercase tracking-tighter shadow-lg">Distance: {stats?.gapToLeader} PTS</span>
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );
