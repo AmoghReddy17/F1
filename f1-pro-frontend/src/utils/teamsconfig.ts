@@ -1,0 +1,18 @@
+export const TEAM_CONFIG: Record<string, { color: string; logo: string }> = {
+  "Mercedes": { color: "#00f5d0", logo: "Mercedes.png" },
+  "Ferrari": { color: "#F91536", logo: "Ferrari.png" },
+  "Red Bull": { color: "#3671C6", logo: "Redbull.png" },
+  "McLaren": { color: "#ff8000", logo: "McLaren.png" },
+  "Aston Martin": { color: "#229971", logo: "AstonMartin.png" },
+  "Alpine": { color: "#0093CC", logo: "Alpine.png" },
+  "Williams": { color: "#64C4FF", logo: "Williams.png" },
+  "Haas F1 Team": { color: "#B6BABD", logo: "Haas.png" },
+  "RB": { color: "#070b36", logo: "RB.png" },
+  "Audi": { color: "#f91536", logo: "Alfa-Romeo.png" }, 
+  "Cadillac": { color: "#ffffff", logo: "SchuderiaAlphaTauri.png" },
+    "Renault": { color: "#FFF500", logo: "Renault.png" },
+    "Toro Rosso": { color: "#469BFF", logo: "ToroRosso.png" },
+    "Racing Point": { color: "#F596C8", logo: "RacingPoint.png" },
+    "Alfa Romeo": { color: "#900000", logo: "AlfaRomeo.png" },
+    "AlphaTauri": { color: "#FFFFFF", logo: "AlphaTauri.png" },
+};
