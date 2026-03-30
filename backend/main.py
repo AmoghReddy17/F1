@@ -18,7 +18,7 @@ app = FastAPI()
 # Replace the placeholder URL with your actual Render frontend link
 origins = [
     "http://localhost:5173",
-    "https://f1-pro-dashboard.onrender.com", # <--- Your actual Render frontend URL
+    "https://f1-1-pro-dashboard.onrender.com", # <--- Your actual Render frontend URL
 ]
 
 app.add_middleware(
