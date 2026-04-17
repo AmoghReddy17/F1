@@ -36,35 +36,38 @@ BASE_URL = "https://api.jolpi.ca/ergast/f1"
 def get_telemetry(year: int, round: int, driver_code: str):
     driver_code = driver_code.upper()
     try:
+        # Use 2025 as the baseline for 2026 physics
         target_year = year if year < 2026 else 2025
         session = fastf1.get_session(target_year, round, 'Q')
         
-        # 🏁 OPTIMIZATION: "Lean Load"
-        # We only load the Laps (small). We do NOT load telemetry yet.
-        session.load(laps=True, telemetry=False, weather=False, messages=False)
+        # 🏁 BALANCED LOAD: We MUST set telemetry=True to access the data.
+        # But we keep weather and messages False to save RAM.
+        session.load(laps=True, telemetry=True, weather=False, messages=False)
         
-        driver_laps = session.laps.pick_drivers(driver_code)
-        if len(driver_laps) == 0: return []
+        # 🏁 CHECK IF DRIVER EXISTS:
+        # Since 'ANT' wasn't in 2025, we need to handle this gracefully.
+        available_drivers = session.laps['Driver'].unique()
+        if driver_code not in available_drivers:
+            print(f"Driver {driver_code} not found in {target_year} data. Try VER or HAM.")
+            return []
 
+        driver_laps = session.laps.pick_drivers(driver_code)
         fastest_lap = driver_laps.pick_fastest()
+        
         if fastest_lap is None:
             fastest_lap = driver_laps.sort_values(by='LapTime').iloc[0]
 
-        # 🏁 OPTIMIZATION: Only pull telemetry for THIS specific lap
-        # This saves ~400MB of RAM, preventing the Render crash.
         telemetry = fastest_lap.get_telemetry()
-        
         boost = 1.07 if year == 2026 else 1.0
         
-        # Increased sampling to [::20] to keep the JSON response very light
         return [
             {"Distance": float(d), "Speed": float(s) * boost} 
             for d, s in zip(telemetry['Distance'], telemetry['Speed'])
         ][::20] 
+        
     except Exception as e:
         print(f"Telemetry Error: {e}")
         return []
-
 # --- 2. RACE RESULTS ---
 @app.get("/api/results/{year}/{round}")
 def get_race_results(year: str, round: str):
